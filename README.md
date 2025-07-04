@@ -47,3 +47,62 @@ We use the BNO055's:
    - Use the measured angular velocities (𝑝, 𝑞, 𝑟) to update the quaternion:
    ```math
    dq/dt = 0.5 * Ω(𝜔) * q
+
+---
+
+3. **Compute Roll and Pitch from Accelerometer (Measurement Step)**
+   - Assume the IMU is stationary or accelerating only due to gravity.
+   - Use these formulas to estimate pitch (𝜃) and roll (𝜙):
+     ```math
+     𝜃 = sin⁻¹(𝑎ₓ / g)
+     𝜙 = tan⁻¹(𝑎ᵧ / 𝑎_z)
+     ```
+   - These angles give us a noisy but immediate estimate of orientation based on gravitational direction.
+
+---
+
+4. **Convert Measured Angles to Quaternion Form**
+   - Convert the calculated 𝜙 and 𝜃 values from the accelerometer into a **measurement quaternion** using the same conversion formula.
+   - This allows a direct comparison between measured and predicted states in the same format (quaternions).
+
+---
+
+5. **Kalman Filter Correction Step**
+   - The filter now updates its belief based on the new measurements:
+     - Predict the **state covariance**:
+       ```math
+       Pₖ⁻ = A * Pₖ₋₁ * Aᵀ + Q
+       ```
+     - Calculate the **Kalman gain**:
+       ```math
+       Kₖ = Pₖ⁻ * Hᵀ * (H * Pₖ⁻ * Hᵀ + R)⁻¹
+       ```
+     - Update the **quaternion state estimate**:
+       ```math
+       xₖ = xₖ⁻ + Kₖ * (zₖ - H * xₖ⁻)
+       ```
+     - Update the **error covariance matrix**:
+       ```math
+       Pₖ = (I - Kₖ * H) * Pₖ⁻
+       ```
+
+---
+
+6. **Convert Final Quaternion to Euler Angles**
+   - After the correction step, convert the updated quaternion back to Euler angles:
+     ```math
+     𝜙 (roll), 𝜃 (pitch), 𝜓 (yaw)
+     ```
+   - These filtered angles represent the best estimate of the IMU’s orientation and are used for real-time visualization or drone control.
+
+---
+
+## 🎯 Result
+
+By combining accelerometer, gyroscope, and magnetometer data, the Kalman Filter provides a **smooth, stable, and drift-corrected estimate** of the drone’s orientation. This enables accurate navigation and control, even in GPS-denied environments like indoor spaces.
+
+The final orientation values can be streamed through USB and visualized in real time, or used directly in drone autopilot systems.
+
+---
+
+ 
