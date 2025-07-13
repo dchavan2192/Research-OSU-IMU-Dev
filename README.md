@@ -14,7 +14,7 @@
 
 ---
 
-## Kalman Filter Implementation in Python and Matlab
+## Kalman Filter Implementation in Python and MATLAB
 - [Python Code](https://github.com/dchavan2192/Research-OSU-IMU-Dev/blob/main/liveKalman.py)
 - [Matlab Code](https://github.com/dchavan2192/Research-OSU-IMU-Dev/blob/main/kalmanSimulation.m)
 
